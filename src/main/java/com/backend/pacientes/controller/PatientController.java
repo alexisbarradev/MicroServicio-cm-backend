@@ -50,9 +50,6 @@ public class PatientController {
                     existingPatient.setDireccion(patientDetails.getDireccion());
                     existingPatient.setComuna(patientDetails.getComuna());
                     existingPatient.setRegion(patientDetails.getRegion());
-                    existingPatient.setSala(patientDetails.getSala());
-                    existingPatient.setCama(patientDetails.getCama());
-                    existingPatient.setFechaRegistro(patientDetails.getFechaRegistro());
 
                     return ResponseEntity.ok(patientService.savePatient(existingPatient));
                 })

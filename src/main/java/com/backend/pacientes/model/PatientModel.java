@@ -51,14 +51,9 @@ public class PatientModel {
     @Column(name = "REGION")
     private String region;
 
-    @Column(name = "SALA", nullable = false)
-    private String sala;
-
-    @Column(name = "CAMA", nullable = false)
-    private String cama;
-
-    @Column(name = "FECHA_REGISTRO", nullable = false)
-    private LocalDate fechaRegistro;
+    @OneToOne
+    @JoinColumn(name = "CAMA_ID", referencedColumnName = "CAMA_ID", unique = true, nullable = true)
+    private BedModel assignedBed;
 
     // Getters y Setters
     public Long getId() {
@@ -173,27 +168,11 @@ public class PatientModel {
         this.region = region;
     }
 
-    public String getSala() {
-        return sala;
+    public BedModel getAssignedBed() {
+        return assignedBed;
     }
 
-    public void setSala(String sala) {
-        this.sala = sala;
-    }
-
-    public String getCama() {
-        return cama;
-    }
-
-    public void setCama(String cama) {
-        this.cama = cama;
-    }
-
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDate fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
+    public void setAssignedBed(BedModel assignedBed) {
+        this.assignedBed = assignedBed;
     }
 }
