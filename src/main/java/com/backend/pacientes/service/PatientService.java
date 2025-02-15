@@ -1,7 +1,8 @@
 package com.backend.pacientes.service;
 
-import  com.backend.pacientes.repository.PatientRepository;
-import  com.backend.pacientes.model.PatientModel;
+import com.backend.pacientes.model.PatientModel;
+import com.backend.pacientes.repository.PatientRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,13 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
+    @Transactional
     public void deletePatient(Long id) {
-        patientRepository.deleteById(id);
+        PatientModel patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente con ID " + id + " no encontrado"));
+
+        
+
+        patientRepository.delete(patient);
     }
 }

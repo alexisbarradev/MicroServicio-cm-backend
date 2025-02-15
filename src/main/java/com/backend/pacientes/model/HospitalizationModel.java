@@ -3,6 +3,7 @@ package com.backend.pacientes.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "HOSPITALIZACIONES")
 public class HospitalizationModel {
@@ -12,27 +13,26 @@ public class HospitalizationModel {
     @Column(name = "HOSPITALIZACION_ID")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "PACIENTE_ID", nullable = false)
-    private PatientModel paciente;
+
+    
+    @Column(name = "PACIENTE_ID", nullable = true)
+    private Long paciente;
+
+
+
 
     @Column(name = "FECHA_INGRESO", nullable = false)
     private LocalDate fechaIngreso;
 
-    @Column(name = "FECHA_ALTA")
-    private LocalDate fechaAlta;
-
     @Column(name = "MOTIVO_INGRESO", nullable = false, length = 500)
     private String motivoIngreso;
-
-    @Column(name = "DIAGNOSTICO", length = 500)
-    private String diagnostico;
 
     @Column(name = "SALA", length = 50)
     private String sala;
 
-    @Column(name = "CAMA", length = 20)
-    private String cama;
+    @Column(name = "CAMA_ID", nullable = true)
+    private Long cama;
+
 
     // Constructor vacío
     public HospitalizationModel() {
@@ -47,11 +47,11 @@ public class HospitalizationModel {
         this.id = id;
     }
 
-    public PatientModel getPaciente() {
+    public Long getPaciente() {
         return paciente;
     }
 
-    public void setPaciente(PatientModel paciente) {
+    public void setPaciente(Long paciente) {
         this.paciente = paciente;
     }
 
@@ -63,28 +63,12 @@ public class HospitalizationModel {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public LocalDate getFechaAlta() {
-        return fechaAlta;
-    }
-
-    public void setFechaAlta(LocalDate fechaAlta) {
-        this.fechaAlta = fechaAlta;
-    }
-
     public String getMotivoIngreso() {
         return motivoIngreso;
     }
 
     public void setMotivoIngreso(String motivoIngreso) {
         this.motivoIngreso = motivoIngreso;
-    }
-
-    public String getDiagnostico() {
-        return diagnostico;
-    }
-
-    public void setDiagnostico(String diagnostico) {
-        this.diagnostico = diagnostico;
     }
 
     public String getSala() {
@@ -95,11 +79,12 @@ public class HospitalizationModel {
         this.sala = sala;
     }
 
-    public String getCama() {
+    public Long getCama() {
         return cama;
     }
-
-    public void setCama(String cama) {
+    
+    public void setCama(Long cama) {
         this.cama = cama;
     }
+    
 }

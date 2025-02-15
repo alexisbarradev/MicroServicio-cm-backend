@@ -3,6 +3,10 @@ package com.backend.pacientes.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+
 @Entity
 @Table(name = "PACIENTES")
 public class PatientModel {
@@ -53,7 +57,14 @@ public class PatientModel {
 
     @OneToOne
     @JoinColumn(name = "CAMA_ID", referencedColumnName = "CAMA_ID", unique = true, nullable = true)
+    @JsonIgnore
     private BedModel assignedBed;
+
+    
+
+
+    
+    
 
     // Getters y Setters
     public Long getId() {

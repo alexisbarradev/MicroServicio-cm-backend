@@ -5,6 +5,8 @@ import  com.backend.pacientes.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class PatientController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         if (patientService.getPatientById(id).isPresent()) {

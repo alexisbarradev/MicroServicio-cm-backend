@@ -16,13 +16,13 @@ public class HospitalizationController {
     @Autowired
     private HospitalizationService hospitalizationService;
 
-    // Obtener todas las hospitalizaciones
+    // ✅ Obtener todas las hospitalizaciones
     @GetMapping
     public List<HospitalizationModel> getAllHospitalizations() {
         return hospitalizationService.getAllHospitalizations();
     }
 
-    // Obtener hospitalización por ID
+    // ✅ Obtener hospitalización por ID
     @GetMapping("/{id}")
     public ResponseEntity<HospitalizationModel> getHospitalizationById(@PathVariable Long id) {
         return hospitalizationService.getHospitalizationById(id)
@@ -30,49 +30,19 @@ public class HospitalizationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Crear una nueva hospitalización
+    // ✅ Crear una nueva hospitalización
     @PostMapping
-    public HospitalizationModel createHospitalization(@RequestBody HospitalizationModel hospitalization) {
-        return hospitalizationService.saveHospitalization(hospitalization);
+    public ResponseEntity<HospitalizationModel> createHospitalization(@RequestBody HospitalizationModel hospitalization) {
+        if (hospitalization.getPaciente() == null || hospitalization.getCama() == null || hospitalization.getFechaIngreso() == null) {
+            return ResponseEntity.badRequest().build(); // Evitar datos incompletos
+        }
+        HospitalizationModel savedHospitalization = hospitalizationService.saveHospitalization(hospitalization);
+        return ResponseEntity.ok(savedHospitalization);
     }
 
-    // Obtener hospitalizaciones de un paciente específico
-    @GetMapping("/paciente/{pacienteId}")
-    public List<HospitalizationModel> getHospitalizationsByPatientId(@PathVariable Long pacienteId) {
-        return hospitalizationService.getHospitalizationsByPatientId(pacienteId);
-    }
+    
 
-    // Obtener hospitalizaciones activas de un paciente (sin fecha de alta)
-    @GetMapping("/paciente/{pacienteId}/activas")
-    public List<HospitalizationModel> getActiveHospitalizations(@PathVariable Long pacienteId) {
-        return hospitalizationService.getActiveHospitalizationsByPatientId(pacienteId);
-    }
-
-    // Actualizar una hospitalización (ejemplo: agregar fecha de alta)
-    @PutMapping("/{id}")
-    public ResponseEntity<HospitalizationModel> updateHospitalization(@PathVariable Long id, @RequestBody HospitalizationModel hospitalizationDetails) {
-        return hospitalizationService.getHospitalizationById(id)
-                .map(existingHospitalization -> {
-                    existingHospitalization.setFechaIngreso(hospitalizationDetails.getFechaIngreso());
-                    existingHospitalization.setFechaAlta(hospitalizationDetails.getFechaAlta());
-                    existingHospitalization.setMotivoIngreso(hospitalizationDetails.getMotivoIngreso());
-                    existingHospitalization.setDiagnostico(hospitalizationDetails.getDiagnostico());
-                    existingHospitalization.setSala(hospitalizationDetails.getSala());
-                    existingHospitalization.setCama(hospitalizationDetails.getCama());
-
-                    return ResponseEntity.ok(hospitalizationService.saveHospitalization(existingHospitalization));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // Dar de alta a un paciente (solo actualiza fecha de alta)
-    @PatchMapping("/{id}/alta")
-    public ResponseEntity<HospitalizationModel> dischargePatient(@PathVariable Long id, @RequestBody HospitalizationModel hospitalizationUpdate) {
-        HospitalizationModel updatedHospitalization = hospitalizationService.dischargePatient(id, hospitalizationUpdate);
-        return updatedHospitalization != null ? ResponseEntity.ok(updatedHospitalization) : ResponseEntity.notFound().build();
-    }
-
-    // Eliminar una hospitalización
+    // ✅ Eliminar una hospitalización
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHospitalization(@PathVariable Long id) {
         if (hospitalizationService.getHospitalizationById(id).isPresent()) {
