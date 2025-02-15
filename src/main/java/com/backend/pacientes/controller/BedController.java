@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/camas")
@@ -17,22 +19,36 @@ public class BedController {
     @Autowired
     private BedService bedService;
 
-    // ✅ Modificación: Formatear la respuesta con números
+    // ✅ Obtener todas las camas disponibles e incluir ocupadas
     @GetMapping("/disponibles")
-    public List<String> getAvailableBeds() {
-        List<BedModel> beds = bedService.getAvailableBeds();
-        List<String> formattedBeds = new ArrayList<>();
+    public ResponseEntity<List<BedModel>> getAllBeds() {
+        List<BedModel> beds = bedService.getAllBeds()
+                .stream()
+                .sorted((b1, b2) -> Integer.compare(b1.getNumeroCama(), b2.getNumeroCama()))
+                .collect(Collectors.toList());
 
-        for (BedModel bed : beds) {
-            formattedBeds.add("Cama " + bed.getNumeroCama() + " - Sala: " + bed.getSala());
-        }
-        return formattedBeds;
+        return ResponseEntity.ok(beds);
     }
 
-    // Endpoint para asignar una cama a un paciente
-    @PostMapping("/asignar/{camaId}/{pacienteId}")
-    public ResponseEntity<String> assignBed(@PathVariable Long camaId, @PathVariable Long pacienteId) {
-        String response = bedService.assignBed(camaId, pacienteId);
-        return ResponseEntity.ok(response);
+    // ✅ Asignar cama a un paciente con JSON en la respuesta
+    @PutMapping("/asignar/{camaId}/{pacienteId}")
+    public ResponseEntity<Map<String, String>> assignBed(@PathVariable Long camaId, @PathVariable Long pacienteId) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            String result = bedService.assignBed(camaId, pacienteId);
+
+            response.put("message", result);
+
+            if (result.contains("Error")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("message", "Error interno en la asignación de la cama.");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 }
+

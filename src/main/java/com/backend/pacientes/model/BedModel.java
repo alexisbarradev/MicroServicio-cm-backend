@@ -1,6 +1,9 @@
 package com.backend.pacientes.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "CAMAS")
@@ -21,11 +24,17 @@ public class BedModel {
     private boolean ocupada = false;
 
     @OneToOne
-    @JoinColumn(name = "PACIENTE_ID", referencedColumnName = "PACIENTE_ID", unique = true, nullable = true)
+    @JoinColumn(name = "PACIENTE_ID", referencedColumnName = "PACIENTE_ID", unique = true, nullable = true, 
+                foreignKey = @ForeignKey(name = "FK_CAMAS_PACIENTES", foreignKeyDefinition = "ON DELETE SET NULL"))
+    @JsonIgnore  // Ignorar la serialización del paciente
     private PatientModel paciente;
 
-    public BedModel() {
-    }
+
+    @OneToMany(mappedBy = "cama", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonIgnore // Evita la serialización de las hospitalizaciones
+    private List<HospitalizationModel> hospitalizations;
+
+    public BedModel() {}
 
     public BedModel(String sala, int numeroCama) {
         this.sala = sala;
@@ -71,5 +80,13 @@ public class BedModel {
 
     public void setPaciente(PatientModel paciente) {
         this.paciente = paciente;
+    }
+
+    public List<HospitalizationModel> getHospitalizations() {
+        return hospitalizations;
+    }
+
+    public void setHospitalizations(List<HospitalizationModel> hospitalizations) {
+        this.hospitalizations = hospitalizations;
     }
 }
