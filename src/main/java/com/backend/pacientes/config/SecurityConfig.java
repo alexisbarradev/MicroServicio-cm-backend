@@ -21,7 +21,10 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/pacientes/**", 
                     "/api/camas/**", 
-                    "/api/hospitalizaciones/**"
+                    "/api/hospitalizaciones/**",
+                    "/api/hospitalizations/dto",
+                    "/vital-signs/publicar",
+                    "/api/patients/start-respiratory-alerts/**"   // ✅ Permitir el endpoint DTO
                 ).permitAll()  
                 .anyRequest().authenticated()
             );
